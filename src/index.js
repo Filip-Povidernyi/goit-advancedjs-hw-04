@@ -1,12 +1,12 @@
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import { fetchPhoto } from "./pixabay";
+import { fetchPixabayPhoto } from "./pixabay";
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
 
 const elems = {
-    searchForm: document.querySelector('.search-form'),
+    form: document.querySelector('.search-form'),
     gallery: document.querySelector('.gallery'),
     btnLoadMore: document.querySelector('.load-more'),
 };
@@ -25,7 +25,7 @@ function bodyBG(imageUrl) {
 
 
 
-const { searchForm, gallery, btnLoadMore } = elems;
+const { form, gallery, btnLoadMore } = elems;
 
 
 const perPage = 40;
@@ -34,7 +34,7 @@ let keyOfSearchPhoto = '';
 
 btnLoadMore.style.display = 'none';
 
-searchForm.addEventListener('submit', onSubmitForm);
+form.addEventListener('submit', onSubmitForm);
 
 function onSubmitForm(event) {
     event.preventDefault();
@@ -61,7 +61,7 @@ function onSubmitForm(event) {
         return;
     }
 
-    fetchPhoto(keyOfSearchPhoto, page, perPage)
+    fetchPixabayPhoto(keyOfSearchPhoto, page, perPage)
         .then(data => {
             const searchResults = data.hits;
             if (data.totalHits === 0) {
