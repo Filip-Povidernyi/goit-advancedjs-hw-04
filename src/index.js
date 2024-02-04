@@ -66,7 +66,6 @@ function onSubmitForm(event) {
             if (data.totalHits === 0) {
                 btnLoadMore.classList.add('is-hidden');
                 body.style.backgroundColor = '#fff';
-                body.style.backgroundImage = 'none';
                 iziToast.error({
                     message: 'Sorry, there are no images matching your search query. Please try again.',
                     position: 'center',
@@ -75,7 +74,6 @@ function onSubmitForm(event) {
             } else {
                 btnLoadMore.classList.add('is-hidden');
                 body.style.backgroundColor = '#fff';
-                body.style.backgroundImage = 'none';
                 iziToast.success({
                     message: `Hooray! We found ${data.totalHits} images.`,
                     position: 'center',
@@ -153,7 +151,6 @@ function onClickLoadMore() {
 function onFetchError() {
     btnLoadMore.classList.add('is-hidden');
     body.style.backgroundColor = '#fff';
-    body.style.backgroundImage = 'none';
     iziToast.error({
         message: 'Oops! Something went wrong! Try reloading the page or make another choice!',
         position: 'center',
