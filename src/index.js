@@ -126,7 +126,7 @@ function createMarkup(searchResults) {
 
 function onClickLoadMore() {
     page += 1;
-    fetchPhoto(keyOfSearchPhoto, page, perPage)
+    fetchPixabayPhoto(keyOfSearchPhoto, page, perPage)
         .then(data => {
             const searchResults = data.hits;
             const numberOfPage = Math.ceil(data.totalHits / perPage);
