@@ -32,7 +32,7 @@ const perPage = 40;
 let page = 1;
 let keyOfSearchPhoto = '';
 
-btnLoadMore.classList.add('is-hidden');
+btnLoadMore.style.display = 'none';
 
 searchForm.addEventListener('submit', onSubmitForm);
 
@@ -42,6 +42,7 @@ function onSubmitForm(event) {
     gallery.innerHTML = '';
     page = 1;
     const { searchQuery } = event.currentTarget.elements;
+    imageUrl = [];
     keyOfSearchPhoto = searchQuery.value
         .trim()
         .toLowerCase()
@@ -121,7 +122,6 @@ function createMarkup(searchResults) {
     });
     gallery.insertAdjacentHTML("beforeend", arrPhotos.join(''));
     bodyBG(imageUrl);
-    imageUrl = [];
 };
 
 function onClickLoadMore() {
