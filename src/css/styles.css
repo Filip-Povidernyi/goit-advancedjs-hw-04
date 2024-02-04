@@ -7,15 +7,16 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fafafa;
+  background-color: #fff;
   color: #212121;
   line-height: 1.5;
+  background-size: cover;
 }
 
 img {
   display: block;
   max-width: 100%;
-  border: 1px solid #0d161b;
+  /* border: 1px solid #0d161b; */
   border-radius: 5px;
 }
 
@@ -75,6 +76,7 @@ button:focus {
 }
 
 .gallery {
+  z-index: 999;
   margin-top: 90px;
   display: flex;
   flex-wrap: wrap;
@@ -83,7 +85,7 @@ button:focus {
 }
 
 .photo-card {
-  background-color: rgba(251, 49, 3, 0.426);
+  background-color: rgb(224, 108, 82);
   border: 1px solid rgba(13, 22, 27, 0.436);
   border-radius: 5px;
   padding: 20px;

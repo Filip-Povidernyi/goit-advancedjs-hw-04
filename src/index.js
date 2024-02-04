@@ -5,13 +5,24 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
 
-
-
 const elems = {
     searchForm: document.querySelector('.search-form'),
     gallery: document.querySelector('.gallery'),
     btnLoadMore: document.querySelector('.load-more'),
 };
+
+const body = document.querySelector('body');
+let imageUrl = [];
+function bodyBG(imageUrl) {
+
+    if (imageUrl) {
+        body.style.backgroundColor = 'transparent';
+        body.style.backgroundImage = `url(${imageUrl[0]})`;
+        body.style.backgroundRepeat = 'no-repeat';
+        body.style.backgroundAttachment = 'fixed';
+    };
+};
+
 
 
 const { searchForm, gallery, btnLoadMore } = elems;
@@ -38,6 +49,9 @@ function onSubmitForm(event) {
         .join('+');
 
     if (keyOfSearchPhoto === '') {
+        btnLoadMore.classList.add('is-hidden');
+        body.style.backgroundColor = '#fff';
+        body.style.backgroundImage = 'none';
         iziToast.info({
             message: 'Enter your request, please!',
             position: 'center',
@@ -49,14 +63,19 @@ function onSubmitForm(event) {
     fetchPhoto(keyOfSearchPhoto, page, perPage)
         .then(data => {
             const searchResults = data.hits;
-            console.log(searchResults)
             if (data.totalHits === 0) {
+                btnLoadMore.classList.add('is-hidden');
+                body.style.backgroundColor = '#fff';
+                body.style.backgroundImage = 'none';
                 iziToast.error({
                     message: 'Sorry, there are no images matching your search query. Please try again.',
                     position: 'center',
                     timeout: 4000,
                 });
             } else {
+                btnLoadMore.classList.add('is-hidden');
+                body.style.backgroundColor = '#fff';
+                body.style.backgroundImage = 'none';
                 iziToast.success({
                     message: `Hooray! We found ${data.totalHits} images.`,
                     position: 'center',
@@ -79,10 +98,11 @@ function onSubmitForm(event) {
 
 function createMarkup(searchResults) {
     const arrPhotos = searchResults.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
+        imageUrl.push(largeImageURL);
         return `<div class="photo-card">
         <div class="img_wrap">
             <a class="gallery_link" href="${largeImageURL}">
-                <img src="${webformatURL}" alt="${tags}" width="300" loading="lazy" />
+                <img class="img" src="${webformatURL}" alt="${tags}" width="300" loading="lazy" />
             </a>
         </div>
         <div class="info">
@@ -102,6 +122,8 @@ function createMarkup(searchResults) {
         </div>`
     });
     gallery.insertAdjacentHTML("beforeend", arrPhotos.join(''));
+    bodyBG(imageUrl);
+    imageUrl = [];
 };
 
 function onClickLoadMore() {
@@ -129,6 +151,9 @@ function onClickLoadMore() {
 };
 
 function onFetchError() {
+    btnLoadMore.classList.add('is-hidden');
+    body.style.backgroundColor = '#fff';
+    body.style.backgroundImage = 'none';
     iziToast.error({
         message: 'Oops! Something went wrong! Try reloading the page or make another choice!',
         position: 'center',
