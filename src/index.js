@@ -31,16 +31,16 @@ const { form, gallery, btnLoadMore } = elems;
 const perPage = 40;
 let page = 1;
 let keyOfSearchPhoto = '';
+let isLoading = false;
+
+
 
 btnLoadMore.style.display = 'none';
 
 form.addEventListener('submit', onSubmitForm);
 
-function onSubmitForm(event) {
+async function onSubmitForm(event) {
     event.preventDefault();
-
-    gallery.innerHTML = '';
-    page = 1;
     const { searchQuery } = event.currentTarget.elements;
     imageUrl = [];
     keyOfSearchPhoto = searchQuery.value
@@ -50,7 +50,7 @@ function onSubmitForm(event) {
         .join('+');
 
     if (keyOfSearchPhoto === '') {
-        btnLoadMore.classList.add('is-hidden');
+        // btnLoadMore.classList.add('is-hidden');
         body.style.backgroundColor = '#fff';
         body.style.backgroundImage = 'none';
         iziToast.info({
@@ -60,39 +60,46 @@ function onSubmitForm(event) {
         });
         return;
     }
-
-    fetchPixabayPhoto(keyOfSearchPhoto, page, perPage)
-        .then(data => {
-            const searchResults = data.hits;
-            if (data.totalHits === 0) {
-                btnLoadMore.classList.add('is-hidden');
-                body.style.backgroundColor = '#fff';
-                iziToast.error({
-                    message: 'Sorry, there are no images matching your search query. Please try again.',
-                    position: 'center',
-                    timeout: 4000,
-                });
-            } else {
-                btnLoadMore.classList.add('is-hidden');
-                body.style.backgroundColor = '#fff';
-                iziToast.success({
-                    message: `Hooray! We found ${data.totalHits} images.`,
-                    position: 'center',
-                    timeout: 4000,
-                });
-                createMarkup(searchResults);
-                lightbox.refresh();
-            };
-            if (data.totalHits > perPage) {
-                btnLoadMore.classList.remove('is-hidden');
-                window.addEventListener('scroll', showLoadMorePage);
-            };
-        })
-        .catch(onFetchError);
-
-    btnLoadMore.addEventListener('click', onClickLoadMore);
-
+    page = 1;
+    gallery.innerHTML = '';
     event.currentTarget.reset();
+
+    try {
+
+        const { hits, total } = await fetchPixabayPhoto(keyOfSearchPhoto, page, perPage);
+
+        if (total === 0) {
+            // btnLoadMore.classList.add('is-hidden');
+            body.style.backgroundColor = '#fff';
+            iziToast.error({
+                message: 'Sorry, there are no images matching your search query. Please try again.',
+                position: 'center',
+                timeout: 4000,
+            });
+            return;
+        };
+        // btnLoadMore.classList.add('is-hidden');
+        body.style.backgroundColor = '#fff';
+        if (total <= perPage) {
+            iziToast.success({
+                message: `Hooray! We found ${total} images. But it's only 1 page`,
+                position: 'center',
+                timeout: 4000,
+            });
+        } else {
+            iziToast.success({
+                message: `Hooray! We found ${total} images.`,
+                position: 'center',
+                timeout: 4000,
+            });
+            window.addEventListener('scroll', showLoadMorePage);
+        };
+        createMarkup(hits);
+        bodyBG(imageUrl);
+        lightbox.refresh();
+    } catch (error) {
+        onFetchError(error.message);
+    };
 };
 
 function createMarkup(searchResults) {
@@ -121,38 +128,44 @@ function createMarkup(searchResults) {
         </div>`
     });
     gallery.insertAdjacentHTML("beforeend", arrPhotos.join(''));
-    bodyBG(imageUrl);
 };
 
-function onClickLoadMore() {
-    page += 1;
-    fetchPixabayPhoto(keyOfSearchPhoto, page, perPage)
-        .then(data => {
-            const searchResults = data.hits;
-            const numberOfPage = Math.ceil(data.totalHits / perPage);
+async function onClickLoadMore() {
+    if (checkIfEndOfPage() && !isLoading) {
+        page += 1;
+        lightbox.refresh();
 
-            createMarkup(searchResults);
-            if (page === numberOfPage) {
-                btnLoadMore.classList.add('is-hidden');
+        try {
+
+            isLoading = true;
+            const { hits, totalHits } = await fetchPixabayPhoto(keyOfSearchPhoto, page, perPage);
+            const numberOfPage = Math.ceil(totalHits / perPage);
+            createMarkup(hits);
+
+            if (page === numberOfPage && !isLoading) {
+                // btnLoadMore.classList.add('is-hidden');
                 iziToast.info({
                     message: "We're sorry, but you've reached the end of search results.",
                     position: 'center',
                     timeout: 4000,
                 });
-                btnLoadMore.removeEventListener('click', onClickLoadMore);
+                // btnLoadMore.removeEventListener('click', onClickLoadMore);
                 window.removeEventListener('scroll', showLoadMorePage);
             };
-            lightbox.refresh();
-            // scrollPage();
-        })
-        .catch(onFetchError);
+        } catch (error) {
+            onFetchError(error.message);
+        } finally {
+            isLoading = false;
+        };
+
+    };
 };
 
-function onFetchError() {
-    btnLoadMore.classList.add('is-hidden');
+function onFetchError(error) {
+    // btnLoadMore.classList.add('is-hidden');
     body.style.backgroundColor = '#fff';
     iziToast.error({
-        message: 'Oops! Something went wrong! Try reloading the page or make another choice!',
+        message: `Oops! Something went wrong! ${error} Try reloading the page or make another choice!`,
         position: 'center',
         timeout: 4000,
     });
@@ -168,9 +181,7 @@ function onFetchError() {
 // };
 
 function showLoadMorePage() {
-    if (checkIfEndOfPage()) {
-        onClickLoadMore();
-    };
+    onClickLoadMore();
 };
 
 function checkIfEndOfPage() {
