@@ -16,8 +16,10 @@ let imageUrl = [];
 function bodyBG(imageUrl) {
 
     if (imageUrl) {
+        let n = imageUrl.length;
+        let idx = Math.floor(Math.random() * n);
         body.style.backgroundColor = 'transparent';
-        body.style.backgroundImage = `url(${imageUrl[0]})`;
+        body.style.backgroundImage = `url(${imageUrl[idx]})`;
         body.style.backgroundRepeat = 'no-repeat';
         body.style.backgroundAttachment = 'fixed';
     };
