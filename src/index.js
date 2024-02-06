@@ -60,6 +60,7 @@ async function onSubmitForm(event) {
             position: 'center',
             timeout: 4000,
         });
+        gallery.innerHTML = '';
         return;
     };
     if (newKeyOfSearchPhoto === keyOfSearchPhoto) {
