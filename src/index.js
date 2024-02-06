@@ -45,13 +45,13 @@ async function onSubmitForm(event) {
     event.preventDefault();
     const { searchQuery } = event.currentTarget.elements;
     imageUrl = [];
-    keyOfSearchPhoto = searchQuery.value
+    let newKeyOfSearchPhoto = searchQuery.value
         .trim()
         .toLowerCase()
         .split(' ')
         .join('+');
 
-    if (keyOfSearchPhoto === '') {
+    if (newKeyOfSearchPhoto === '') {
         // btnLoadMore.classList.add('is-hidden');
         body.style.backgroundColor = '#fff';
         body.style.backgroundImage = 'none';
@@ -61,11 +61,14 @@ async function onSubmitForm(event) {
             timeout: 4000,
         });
         return;
-    }
+    };
+    if (newKeyOfSearchPhoto !== keyOfSearchPhoto) {
+        window.removeEventListener('scroll', showLoadMorePage)
+    };
+    keyOfSearchPhoto = newKeyOfSearchPhoto;
     page = 1;
     gallery.innerHTML = '';
     event.currentTarget.reset();
-    window.removeEventListener('scroll', showLoadMorePage);
 
     try {
 
@@ -89,6 +92,7 @@ async function onSubmitForm(event) {
                 position: 'center',
                 timeout: 4000,
             });
+            window.removeEventListener('scroll', showLoadMorePage);
         } else {
             iziToast.success({
                 message: `Hooray! We found ${total} images.`,
@@ -145,7 +149,7 @@ async function onClickLoadMore() {
             const numberOfPage = Math.ceil(totalHits / perPage);
             createMarkup(hits);
 
-            if (page === numberOfPage && !isLoading) {
+            if (page === numberOfPage) {
                 // btnLoadMore.classList.add('is-hidden');
                 iziToast.info({
                     message: "We're sorry, but you've reached the end of search results.",
