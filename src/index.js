@@ -16,7 +16,7 @@ let imageUrl = [];
 function bodyBG(imageUrl) {
 
     if (imageUrl) {
-        let n = imageUrl.length;
+        let n = (imageUrl.length - 1);
         let idx = Math.floor(Math.random() * n);
         body.style.backgroundColor = 'transparent';
         body.style.backgroundImage = `url(${imageUrl[idx]})`;
@@ -65,6 +65,7 @@ async function onSubmitForm(event) {
     page = 1;
     gallery.innerHTML = '';
     event.currentTarget.reset();
+    window.removeEventListener('scroll', showLoadMorePage);
 
     try {
 
