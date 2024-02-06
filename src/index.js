@@ -62,6 +62,17 @@ async function onSubmitForm(event) {
         });
         return;
     };
+    if (newKeyOfSearchPhoto === keyOfSearchPhoto) {
+        iziToast.info({
+            title: 'Info',
+            message: `The previous ${newKeyOfSearchPhoto} request has already been received, please enter a new search parameter.`,
+            position: 'topRight',
+            color: 'blue',
+        });
+        event.currentTarget.reset();
+
+        return;
+    }
     if (newKeyOfSearchPhoto !== keyOfSearchPhoto) {
         window.removeEventListener('scroll', showLoadMorePage)
     };
