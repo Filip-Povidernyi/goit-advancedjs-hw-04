@@ -85,7 +85,7 @@ button:focus {
 }
 
 .photo-card {
-  background-color: rgb(224, 108, 82);
+  background-color: #C8E3FF;
   border: 1px solid rgba(13, 22, 27, 0.436);
   border-radius: 5px;
   padding: 20px;

@@ -152,7 +152,7 @@ function createMarkup(searchResults) {
 async function onClickLoadMore() {
     if (checkIfEndOfPage() && !isLoading) {
         page += 1;
-        lightbox.refresh();
+        // lightbox.refresh();
 
         try {
 
@@ -160,6 +160,7 @@ async function onClickLoadMore() {
             const { hits, totalHits } = await fetchPixabayPhoto(keyOfSearchPhoto, page, perPage);
             const numberOfPage = Math.ceil(totalHits / perPage);
             createMarkup(hits);
+            lightbox.refresh();
 
             if (page === numberOfPage) {
                 // btnLoadMore.classList.add('is-hidden');
