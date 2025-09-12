@@ -1,5 +1,7 @@
 import iziToast from 'izitoast';
 import "izitoast/dist/css/iziToast.min.css";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 import { getPhotos } from './pixabay';
 
 const form = document.querySelector('.search-form');
@@ -18,7 +20,6 @@ form.addEventListener('submit', async (evt) => {
     try {
 
         const data = await getPhotos(query.trim().toLowerCase(), currentPage, per_page);
-        console.log('data', data)
 
         if (data.total === 0) {
             btnLoadMore.classList.add('is-hidden');
@@ -37,6 +38,16 @@ form.addEventListener('submit', async (evt) => {
         });
 
         gallery.innerHTML = markUp(data.hits).join('');
+
+        let gallerySimp = new SimpleLightbox('.img_wrap a', {
+            captionsData: 'alt',
+            captionDelay: 250,
+        });
+        gallerySimp.on('show.simplelightbox', () => {
+            const galleryImage = document.querySelector('img.img-high');
+            galleryImage.style.maxHeight = '100vh';
+        });
+
         let idx = Math.floor(Math.random() * (data.hits.length - 1));
         const bgImage = data.hits[idx].largeImageURL;
         document.body.style.backgroundImage = `url(${bgImage})`;
@@ -61,7 +72,7 @@ const markUp = (data) => {
         return `<div class="photo-card">
         <div class="img_wrap">
             <a class="gallery_link" href="${largeImageURL}">
-                <img class="img" src="${webformatURL}" alt="${tags}" width="300" loading="lazy" />
+                <img class="img img-high" src="${webformatURL}" alt="${tags}" width="300" loading="lazy" />
             </a>
         </div>
         <div class="info">
@@ -88,6 +99,7 @@ btnLoadMore.addEventListener('click', async () => {
     try {
         const data = await getPhotos(query.trim().toLowerCase(), currentPage, per_page);
         gallery.insertAdjacentHTML('beforeend', markUp(data.hits).join(''));
+        lightbox.refresh();
         if (currentPage >= Math.ceil(data.totalHits / per_page)) {
             btnLoadMore.classList.add('is-hidden');
             iziToast.info({
@@ -109,317 +121,7 @@ btnLoadMore.addEventListener('click', async () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Варіант 2 з безкінечним скролом
 
 
 // import SimpleLightbox from "simplelightbox";
